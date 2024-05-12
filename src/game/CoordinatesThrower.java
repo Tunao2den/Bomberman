@@ -1,11 +1,17 @@
+package game;
+
+import client.ClientManager;
+import constants.Const;
+import server.Server;
+
 import java.awt.event.KeyEvent;
 
 //thread que dispara as coordenadas seguintes aos clientes enquanto W/A/S/D não é solto
-class CoordinatesThrower extends Thread {
-   boolean up, right, left, down;
-   int id;
+public class CoordinatesThrower extends Thread {
+   public boolean up, right, left, down;
+   public int id;
 
-   CoordinatesThrower(int id) {
+   public CoordinatesThrower(int id) {
       this.id = id;
       up = down = right = left = false;
    }
@@ -133,7 +139,7 @@ class CoordinatesThrower extends Thread {
       return false;
    }
 
-   void keyCodePressed(int keyCode) {
+   public void keyCodePressed(int keyCode) {
       switch (keyCode) {
          case KeyEvent.VK_W: 
             up = true; down = right = left = false;
@@ -154,7 +160,7 @@ class CoordinatesThrower extends Thread {
       }
    }
 
-   void keyCodeReleased(int keyCode) {
+   public void keyCodeReleased(int keyCode) {
       if (keyCode != KeyEvent.VK_W && keyCode != KeyEvent.VK_S && keyCode != KeyEvent.VK_D && keyCode != KeyEvent.VK_A)
          return;
 

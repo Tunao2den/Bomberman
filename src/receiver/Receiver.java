@@ -1,3 +1,10 @@
+package receiver;
+
+import client.Client;
+import constants.Const;
+import game.Game;
+import player.Player;
+
 //recebe informações de todos os clientes
 public class Receiver extends Thread {
    Player p;
@@ -5,7 +12,7 @@ public class Receiver extends Thread {
    Player fromWhichPlayerIs(int id) {
       if (id == Client.id)
          return Game.you;
-      else if (id == (Client.id+1)%Const.QTY_PLAYERS)
+      else if (id == (Client.id+1)% Const.QTY_PLAYERS)
          return Game.enemy1;
       else if (id == (Client.id+2)%Const.QTY_PLAYERS)
          return Game.enemy2;

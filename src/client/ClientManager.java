@@ -1,3 +1,10 @@
+package client;
+
+import constants.Const;
+import game.CoordinatesThrower;
+import game.MapUpdatesThrower;
+import server.Server;
+
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
@@ -6,10 +13,10 @@ import java.util.List;
 import java.util.Scanner;
 
 //a cada cliente que entra no servidor, uma nova thread é instanciada para tratá-lo
-class ClientManager extends Thread {
-   static List<PrintStream> listOutClients = new ArrayList<PrintStream>();
+public class ClientManager extends Thread {
+   public static List<PrintStream> listOutClients = new ArrayList<PrintStream>();
 
-   static void sendToAllClients(String outputLine) {
+   public static void sendToAllClients(String outputLine) {
       for (PrintStream outClient : listOutClients)
          outClient.println(outputLine);
    }
@@ -19,10 +26,10 @@ class ClientManager extends Thread {
    private PrintStream out = null;
    private int id;
 
-   CoordinatesThrower ct;
-   MapUpdatesThrower mt;
+   public CoordinatesThrower ct;
+   public MapUpdatesThrower mt;
 
-   ClientManager(Socket clientSocket, int id) {
+   public ClientManager(Socket clientSocket, int id) {
       this.id = id;
       this.clientSocket = clientSocket;
       (ct = new CoordinatesThrower(this.id)).start();
@@ -67,7 +74,7 @@ class ClientManager extends Thread {
       clientDesconnected();
    }
 
-   void sendInitialSettings() {
+   public void sendInitialSettings() {
       out.print(id);
       for (int i = 0; i < Const.LIN; i++)
          for (int j = 0; j < Const.COL; j++)
@@ -81,7 +88,7 @@ class ClientManager extends Thread {
       out.print("\n");
    }
 
-   void clientDesconnected() {
+   public void clientDesconnected() {
       listOutClients.remove(out);
       Server.player[id].logged = false;
       try {

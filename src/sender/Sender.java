@@ -1,6 +1,12 @@
+package sender;
+
+import client.Client;
+
 import java.awt.event.*;
+import game.Game;
 
 //escuta enquanto a janela (JFrame) estiver em foco
+//Listens while the window (JFrame) is in focus
 public class Sender extends KeyAdapter {
    int lastKeyCodePressed;
    

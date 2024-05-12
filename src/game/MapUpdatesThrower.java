@@ -1,14 +1,20 @@
-//thread que lança mudanças graduais no mapa que ocorrem logo após a bomba ser plantada
-class MapUpdatesThrower extends Thread {
-   boolean bombPlanted;
-   int id, l, c;
+package game;
 
-   MapUpdatesThrower(int id) {
+import client.ClientManager;
+import constants.Const;
+import server.Server;
+
+//thread que lança mudanças graduais no mapa que ocorrem logo após a bomba ser plantada
+public class MapUpdatesThrower extends Thread {
+   public boolean bombPlanted;
+   public int id, l, c;
+
+   public MapUpdatesThrower(int id) {
       this.id = id;
       this.bombPlanted = false;
    }
 
-   void setBombPlanted(int x, int y) {
+   public void setBombPlanted(int x, int y) {
       x += Const.WIDTH_SPRITE_PLAYER / 2;
       y += 2 * Const.HEIGHT_SPRITE_PLAYER / 3;
 
@@ -19,7 +25,7 @@ class MapUpdatesThrower extends Thread {
    }
 
    //muda o mapa no servidor e no cliente
-   static void changeMap(String keyWord, int l, int c) {
+   public static void changeMap(String keyWord, int l, int c) {
       Server.map[l][c].img = keyWord;
       ClientManager.sendToAllClients("-1 mapUpdate " + keyWord + " " + l + " " + c);
    }
@@ -32,7 +38,7 @@ class MapUpdatesThrower extends Thread {
    }
 
    // verifica se o fogo atingiu algum jogador parado (coordenada do centro do corpo)
-   void checkIfExplosionKilledSomeone(int linSprite, int colSprite) {
+   public void checkIfExplosionKilledSomeone(int linSprite, int colSprite) {
       int linPlayer, colPlayer, x, y;
 
       for (int id = 0; id < Const.QTY_PLAYERS; id++)
@@ -105,28 +111,3 @@ class MapUpdatesThrower extends Thread {
    }
 }
 
-//thread auxiliar
-class Thrower extends Thread {
-   String keyWord, index[];
-   int l, c;
-   int delay;
-
-   Thrower(String keyWord, String index[], int delay, int l, int c) {
-      this.keyWord = keyWord;
-      this.index = index;
-      this.delay = delay;
-      this.l = l;
-      this.c = c;
-   }
-
-   public void run() {
-      for (String i : index) {
-         MapUpdatesThrower.changeMap(keyWord + "-" + i, l, c);
-         try {
-            sleep(delay);
-         } catch (InterruptedException e) {}
-      }
-      //situação pós-explosão
-      MapUpdatesThrower.changeMap("floor-1", l, c);
-   }
-}

@@ -1,5 +1,7 @@
+package constants;
+
 // Accessed by the server and the client
-interface Const {
+public interface Const {
    // If it's not 4, many things need to stop being instantiated
    final static int QTY_PLAYERS = 4; 
 
@@ -31,18 +33,3 @@ interface Const {
    };
 }
 
-class Coordinate {
-   public int x, y;
-   String img;
-
-   Coordinate(int x, int y) {
-      this.x = x;
-      this.y = y;
-   }
-
-   Coordinate(int x, int y, String img) {
-      this.x = x;
-      this.y = y;
-      this.img = img;
-   }
-}

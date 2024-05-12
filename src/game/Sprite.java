@@ -1,3 +1,5 @@
+package game;
+
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
@@ -5,16 +7,16 @@ import java.util.Hashtable;
 import javax.imageio.ImageIO;
 
 public class Sprite {
-   final static String personColors[] = {
+   public final static String personColors[] = {
       "white", 
       "black", 
       "red", 
       "yellow"
    };
 
-   final static Hashtable<String, Image> ht = new Hashtable<String, Image>();
+   public final static Hashtable<String, Image> ht = new Hashtable<String, Image>();
    //não está na ordem do spritesheet
-   final static String mapKeyWords[] = { 
+   public final static String mapKeyWords[] = {
       "background", 
       "block", 
       "block-on-fire-1", "block-on-fire-2", "block-on-fire-3", "block-on-fire-4", "block-on-fire-5", "block-on-fire-6", 
@@ -34,7 +36,7 @@ public class Sprite {
       "wall-center", "wall-down-left", "wall-down-right", "wall-up-left", "wall-up-right" 
    };
    //já está na ordem do spritesheet para usar autoCropAndRename.cpp
-   static final String personKeyWords[] = {
+   public static final String personKeyWords[] = {
       "dead-0", "dead-1", "dead-2", "dead-3", "dead-4", 
       "down-0", "down-1", "down-2", "down-3", "down-4", "down-5", "down-6", "down-7", 
       "left-0", "left-1", "left-2", "left-3", "left-4", "left-5", "left-6", "left-7", 
@@ -44,9 +46,9 @@ public class Sprite {
       "wait-0", "wait-1", "wait-2", "wait-3", "wait-4", 
       "win-0", "win-1", "win-2", "win-3", "win-4"
    };
-   
-   final static Hashtable<String, Integer> maxLoopStatus = new Hashtable<String, Integer>();
-   static void setMaxLoopStatus() {
+
+   public final static Hashtable<String, Integer> maxLoopStatus = new Hashtable<String, Integer>();
+   public static void setMaxLoopStatus() {
       maxLoopStatus.put("dead", 5);
       maxLoopStatus.put("down", 8);
       maxLoopStatus.put("left", 8);
@@ -57,7 +59,7 @@ public class Sprite {
       maxLoopStatus.put("win", 5);
    }
 
-   static void loadImages() {
+   public static void loadImages() {
       try {
          System.out.print("Carregando imagens...");
          for (String keyWord : mapKeyWords)

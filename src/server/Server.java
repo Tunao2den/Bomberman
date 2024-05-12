@@ -1,26 +1,26 @@
+package server;
+
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.rmi.AccessException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-class PlayerData {
-   boolean logged, alive;
-   int x, y; //coordenada atual
-   int numberOfBombs;
+import client.ClientManager;
+import constants.Const;
+import constants.Coordinate;
+import gamefactory.GameFactoryImpl;
+import gamefactory.IGameFactory;
 
-   PlayerData(int x, int y) {
-      this.x = x;
-      this.y = y;
-      this.logged = false;
-      this.alive = false;
-      this.numberOfBombs = 1; // para 2 bombas, é preciso tratar cada bomba em uma thread diferente
-   }
-}
+public class Server {
+   public static PlayerData player[] = new PlayerData[Const.QTY_PLAYERS];
+   public static Coordinate map[][] = new Coordinate[Const.LIN][Const.COL];
 
-class Server {
-   static PlayerData player[] = new PlayerData[Const.QTY_PLAYERS];
-   static Coordinate map[][] = new Coordinate[Const.LIN][Const.COL];
-   
-   Server(int portNumber) {
+   public Server(int portNumber) {
       ServerSocket ss;
 
       setMap();
@@ -31,12 +31,23 @@ class Server {
          ss = new ServerSocket(portNumber); // socket escuta a porta
          System.out.print(" ok\n");
 
+//         InetAddress inetAddr = InetAddress.getLocalHost();
+//         String hostName = inetAddr.getHostName();
+//         String hostAddress = inetAddr.getHostAddress();
+//         Registry registry = LocateRegistry.getRegistry("localhost",8383);
+//
+//         if (registry !=null){
+//            IGameFactory gameFactory = (IGameFactory) new GameFactoryImpl();
+//            registry.rebind("server", gameFactory);
+//         } else registry = LocateRegistry.createRegistry(8383);
+
+
          for (int id = 0; !loggedIsFull(); id = (++id)%Const.QTY_PLAYERS)
             if (!player[id].logged) {
                Socket clientSocket = ss.accept();
                new ClientManager(clientSocket, id).start();
             }
-         //nao encerra o servidor enquanto a thread dos clientes continuam executando
+         //does not shut down the server while the client thread continues running
       } catch (IOException e) {
          System.out.println(" erro: " + e + "\n");
          System.exit(1);

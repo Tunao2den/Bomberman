@@ -5,8 +5,8 @@
 - Rode os comandos:
    - `cd src`
    - Compile: `javac *.java`
-   - Inicie o servidor: `java Server`
-   - Inicie o cliente: `java Client`
+   - Inicie o servidor: `java server.Server`
+   - Inicie o cliente: `java client.client.Client`
 
 # Introdução
 
@@ -26,4 +26,4 @@ Através de um mapa exibido por uma interface gráfica, o jogador fará seus m
 
 Autor: [Bruno Papa](https://github.com/brnpapa)
 
-Sprites ripped by Zanaku, Game tilesets ripped by Plasma Captain.
+Sprites ripped by Zanaku, game.Game tilesets ripped by Plasma Captain.
