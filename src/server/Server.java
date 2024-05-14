@@ -34,7 +34,7 @@ public class Server {
 //         InetAddress inetAddr = InetAddress.getLocalHost();
 //         String hostName = inetAddr.getHostName();
 //         String hostAddress = inetAddr.getHostAddress();
-//         Registry registry = LocateRegistry.getRegistry("localhost",8383);
+//         Registry registry = LocateRegistry.getRegistry("localhost",83   83);
 //
 //         if (registry !=null){
 //            IGameFactory gameFactory = (IGameFactory) new GameFactoryImpl();

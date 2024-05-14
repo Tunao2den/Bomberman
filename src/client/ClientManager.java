@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-//a cada cliente que entra no servidor, uma nova thread é instanciada para tratá-lo
+//for each client that enters the server, a new thread is instantiated to handle it
 public class ClientManager extends Thread {
    public static List<PrintStream> listOutClients = new ArrayList<PrintStream>();
 
