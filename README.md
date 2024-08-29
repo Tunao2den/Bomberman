@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ![Interface gráfica do jogo](./images/screenshot.png)
 
 # Como executar
@@ -27,3 +28,6 @@ Através de um mapa exibido por uma interface gráfica, o jogador fará seus m
 Autor: [Bruno Papa](https://github.com/brnpapa)
 
 Sprites ripped by Zanaku, game.Game tilesets ripped by Plasma Captain.
+=======
+# Bomberman
+>>>>>>> e44c92ba01737759e93c84575927741a086e6182
