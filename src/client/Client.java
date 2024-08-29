@@ -9,6 +9,7 @@ import gamefactory.GameFactoryImpl;
 import gamefactory.IGameFactory;
 import gamesession.IGameSession;
 import receiver.Receiver;
+import rmisetup.SetupRMI;
 import sender.Sender;
 
 import java.awt.*;
@@ -18,11 +19,15 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 
 import javax.swing.*;
+import client.UserLoginRegisterScreen1;
 
 public class Client {
    private Socket socket = null;
@@ -36,7 +41,15 @@ public class Client {
    public static Coordinate spawn[] = new Coordinate[Const.QTY_PLAYERS];
    public static boolean alive[] = new boolean[Const.QTY_PLAYERS];
 
-   Client(String host, int porta) {
+
+   protected static IGameFactory gameFactory;
+
+   private Registry gameFactoryRegistry;
+   private SetupRMI rmiContext;
+
+
+
+   Client(String host, int porta) throws NotBoundException, RemoteException {
       try {
          System.out.print("Establishing connection with the server...");
          this.socket = new Socket(host, porta);
@@ -55,6 +68,9 @@ public class Client {
       
       receiveInitialSettings();
       new Receiver().start();
+
+
+      lookupGameFactory();
    }
 
    void receiveInitialSettings() {
@@ -73,83 +89,73 @@ public class Client {
       for (int i = 0; i < Const.QTY_PLAYERS; i++)
          Client.spawn[i] = new Coordinate(in.nextInt(), in.nextInt());
    }
-   
-   public static void main(String[] args) {
-      new Client("127.0.0.1", 8383);
-      SwingUtilities.invokeLater(LoginFrame::new);
-      boolean logged = true;
-      if (logged == true) new Window();
-   }
-}
 
-class Window extends JFrame {
-   private static final long serialVersionUID = 1L;
-
-   Window() {
-      Sprite.loadImages();
-      Sprite.setMaxLoopStatus();
-      
-      add(new Game(Const.COL*Const.SIZE_SPRITE_MAP, Const.LIN*Const.SIZE_SPRITE_MAP));
-      setTitle("bomberman");
-      pack();
-      setVisible(true);
-      setLocationRelativeTo(null);
-      setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-      addKeyListener(new Sender());
-   }
-}
-
-class LoginFrame extends JFrame implements ActionListener {
-   public JTextField usernameField;
-   public JPasswordField passwordField;
-
-   public void actionPerformed(ActionEvent e) {
-      String username = usernameField.getText();
-      String password = new String(passwordField.getPassword());
-
+   public void lookupGameFactory() throws RemoteException, NotBoundException {
       try {
-         IGameFactory gameFactory = new GameFactoryImpl();
-         DatabaseMockup databaseMockup = new DatabaseMockup();
-         if(!databaseMockup.exists(username)){
-            gameFactory.register(username,password);
+         this.rmiContext = new SetupRMI();
+         Registry registry = rmiContext.getRegistry();
 
-         } else {
-            IGameSession session = gameFactory.login(username,password);
-            session.joinGame("",1);
-         }
+         String serviceUrl = rmiContext.getServicesUrl(0);
 
-      } catch (NoSuchAlgorithmException ex) {
-         throw new RuntimeException(ex);
-      } catch (RemoteException ex) {
-         throw new RuntimeException(ex);
+
+         IGameFactory gameFactory = (IGameFactory) registry.lookup(serviceUrl);
+
+         this.gameFactory = gameFactory;
+
+      } catch (RemoteException e) {
+         System.err.println("RemoteException: " + e.getMessage());
+         e.printStackTrace();
+         throw e;
+      } catch (UnknownHostException e) {
+          throw new RuntimeException(e);
       }
    }
 
-   public LoginFrame() {
-      setTitle("User Login");
-      setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      setSize(300, 200);
-      setLocationRelativeTo(null);
+//   public boolean loginRegisterAPI(){
+//      Runnable createAndShowGui = new Runnable() {
+//         @Override
+//         public void run() {
+//            UserLoginRegisterScreen loginRegisterScreen = new UserLoginRegisterScreen(gameFactory);
+//         }
+//      };
+//
+//      // createAndShowGui runnable'ını invokeLater ile çalıştırarak GUI başlat
+//      SwingUtilities.invokeLater(createAndShowGui);
+//
+//      if(loginRegisterScreen.loginperformed() || loginRegisterScreen.registerperformed() ) return true;
+//      else return false;
+//   }
 
-      JPanel panel = new JPanel();
-      panel.setLayout(new GridLayout(3, 1));
+   public static boolean loginRegisterAPI() {
+      // Ana uygulama penceresini başlatmak için Swing'in Event Dispatch Thread'ini kullanıyoruz
+      final UserLoginRegisterScreen1[] loginRegisterScreen = {null};
 
-      JLabel usernameLabel = new JLabel("Username:");
-      usernameField = new JTextField();
-      panel.add(usernameLabel);
-      panel.add(usernameField);
+      Runnable createAndShowGui = () -> {
+         // UserLoginRegisterScreen örneğini oluştur
+         loginRegisterScreen[0] = new UserLoginRegisterScreen1(gameFactory);
+      };
 
-      JLabel passwordLabel = new JLabel("Password:");
-      passwordField = new JPasswordField();
-      panel.add(passwordLabel);
-      panel.add(passwordField);
+      // createAndShowGui runnable'ını invokeLater ile çalıştırarak GUI başlat
+      SwingUtilities.invokeLater(createAndShowGui);
 
-      JButton loginButton = new JButton("Login");
-      loginButton.addActionListener(this);
-      panel.add(loginButton);
+      while (loginRegisterScreen[0] == null || (!loginRegisterScreen[0].isLoginPerformed() && !loginRegisterScreen[0].isRegisterPerformed())) {
+         try {
+            Thread.sleep(100);  // Bekleme döngüsü
+         } catch (InterruptedException e) {
+            e.printStackTrace();
+         }
+      }
 
-      add(panel);
-      setVisible(true);
+      return loginRegisterScreen[0].isLoginPerformed() || loginRegisterScreen[0].isRegisterPerformed();
+   }
+
+
+
+   
+   public static void main(String[] args) throws NotBoundException, RemoteException {
+      new Client("127.0.0.1", 8383);
+      SwingUtilities.invokeLater(() -> new UserLoginRegisterScreen1(null));
+      boolean st = loginRegisterAPI();
+      if (st) new Window();
    }
 }

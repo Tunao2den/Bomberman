@@ -76,7 +76,7 @@ public class GameFactoryImpl implements IGameFactory{
                     .withIssuer("auth0")
                     .withSubject(username)
                     .withIssuedAt(new Date())
-                    .withExpiresAt(new Date(System.currentTimeMillis() + 3600000)) // 1 saat geçerli
+                    .withExpiresAt(new Date(System.currentTimeMillis() + 3600000)) // expires in 1 hour
                     .sign(algorithm);
         } catch (JWTCreationException exception) {
             throw new RuntimeException("Invalid Signing configuration / Couldn't convert Claims.", exception);
